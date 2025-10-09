@@ -24,14 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($user) && !empty($pass)) {
         // Use prepared statements to prevent SQL injection
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
-        $stmt->bind_param("s", $user);
-        $stmt->execute();
-        $stmt->store_result();
-
+        $stmt = $conn->query("SELECT id, password FROM users WHERE username = '$user'");
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $hashed_password);
-            $stmt->fetch();
+            $row = $stmt->fetch_row();
+            $hashed_password = $row[1];
+            $id = $row[0];
 
             if (password_verify($pass, $hashed_password)) {
                 // Success: set session and redirect
@@ -42,11 +39,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $error = "Invalid password.";
             }
+            $stmt->free_result();
         } else {
             $error = "User not found.";
         }
 
-        $stmt->close();
     } else {
         $error = "Please fill in all fields.";
     }
