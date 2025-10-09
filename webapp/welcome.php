@@ -12,7 +12,7 @@ if (!isset($_SESSION["user_id"])) {
     <title>Welcome</title>
 </head>
 <body>
-    <h1>Hello, <?php echo htmlspecialchars($_SESSION["username"]); ?>!</h1>
+    <h1>Hello, <?php echo $_SESSION["username"]; ?>!</h1>
     <p>You've successfully logged in.</p>
     <a href="logout.php">Logout</a>
 </body>
