@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Replace with your own database credentials
 $host = "127.0.0.1";
 $dbname = "injection";
 $username = "admin";
