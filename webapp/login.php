@@ -23,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pass = trim($_POST["password"]);
 
     if (!empty($user) && !empty($pass)) {
-        // Use prepared statements to prevent SQL injection
         $stmt = $conn->query("SELECT id, password FROM users WHERE username = '$user'");
         if ($stmt->num_rows > 0) {
             $row = $stmt->fetch_row();
