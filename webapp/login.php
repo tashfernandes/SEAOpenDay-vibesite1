@@ -22,24 +22,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pass = trim($_POST["password"]);
 
     if (!empty($user) && !empty($pass)) {
-        $stmt = $conn->query("SELECT id, password FROM users WHERE username = '$user'");
+        $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
+        $stmt = $conn->query("SELECT id, username FROM users WHERE username = '$user' and password = '$hashed_password'");
         if ($stmt->num_rows > 0) {
             $row = $stmt->fetch_row();
-            $hashed_password = $row[1];
             $id = $row[0];
-
-            if (password_verify($pass, $hashed_password)) {
-                // Success: set session and redirect
-                $_SESSION["user_id"] = $id;
-                $_SESSION["username"] = $user;
-                header("Location: welcome.php");
-                exit();
-            } else {
-                $error = "Invalid password.";
-            }
+            $uname = $row[1]
+            $_SESSION["user_id"] = $id;
+            $_SESSION["username"] = $uname;
+            header("Location: welcome.php");
+            exit();
             $stmt->free_result();
         } else {
-            $error = "User not found.";
+            $error = "Incorrect username or password.";
         }
 
     } else {
