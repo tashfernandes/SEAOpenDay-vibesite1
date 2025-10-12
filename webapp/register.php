@@ -7,6 +7,8 @@ $dbname = "injection";
 $username = "admin";
 $password = "password";
 
+$secret_key = "12345";
+
 // Create database connection
 $conn = new mysqli($host, $username, $password, $dbname);
 
@@ -27,7 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($user) && !empty($pass) && !empty($confirm)) {
         if ($pass === $confirm) {
             // Check if username already exists
-            $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+
+            $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
             $stmt->bind_param("s", $user);
             $stmt->execute();
             $stmt->store_result();
@@ -37,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 // Hash the password for security
                 $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
-
                 $insert = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
                 $insert->bind_param("ss", $user, $hashed_password);
 

@@ -9,28 +9,22 @@ $password = "password";
 // Create database connection
 $conn = new mysqli($host, $username, $password, $dbname);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
 $error = "";
 
-// Handle login form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = trim($_POST["username"]);
-    $pass = trim($_POST["password"]);
+    $pass = $_POST["password"];
 
     if (!empty($user) && !empty($pass)) {
-        $stmt = $conn->query("SELECT id, username, password FROM users WHERE username = '$user'");
+        $stmt = $conn->query("SELECT id, password FROM users WHERE username = '$user'");
 
         if ($stmt->num_rows > 0) {
             $row = $stmt->fetch_row();
             $id = $row[0];
-            $hashed_password = $row[2];
+            $hashed_password = $row[1];
             if (password_verify($pass, $hashed_password)) {
               $_SESSION["user_id"] = $id;
-              $_SESSION["username"] = $row[1];
+              $_SESSION["username"] = $user;
               header("Location: welcome.php");
               exit();
             } else {
